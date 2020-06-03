@@ -85,10 +85,10 @@ class ResponseParser {
     get response() {
         this.statusLine.match(/HTTP\/1.1 ([0-9]+) ([\s\S]+)/)
         return {
-        statusCode: RegExp.$1,
-        statusText: RegExp.$2,
-        headers: this.headers,
-        body: this.bodyParser.content.join('')
+            statusCode: RegExp.$1,
+            statusText: RegExp.$2,
+            headers: this.headers,
+            body: this.bodyParser.content.join('')
         }
     }
 
@@ -170,9 +170,9 @@ class TrunkedBodyParser {
                 }
                 this.current = this.WAITING_STATUS_LINE_END
             }else{
-                this.length *= 10
+                this.length *= 16   //16进制
                 // this.length += char.charCodeAt(0) - '0'.charCodeAt(0)
-                this.length += char.charCodeAt(0) - '0'.charCodeAt(0)
+                this.length += parseInt(char, 16);
             }
         }else if(this.current === this.WAITING_LENGTH_LINE_END){
             if(chart == '\n'){
@@ -211,7 +211,9 @@ void async function (){
             name: "winter"
         }
     })
-    await request.send()
+    let response = await request.send()
+    let dom = parser.parseHTML(response.body)
+
 }();
 
 
